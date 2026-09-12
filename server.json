@@ -1,0 +1,9 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
+  "name": "io.github.Jenpo/fxpeek",
+  "description": "Historical reference exchange rates with a source link per row. Tools: get_latest_rate, get_history.",
+  "version": "1.0.0",
+  "remotes": [
+    { "type": "streamable-http", "url": "https://fxpeek.com/api/mcp" }
+  ]
+}
