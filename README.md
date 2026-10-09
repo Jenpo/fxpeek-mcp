@@ -2,6 +2,9 @@
 
 Model Context Protocol server for **FXpeek** historical reference exchange rates.
 
+[![Jenpo/fxpeek-mcp MCP server](https://glama.ai/mcp/servers/Jenpo/fxpeek-mcp/badges/score.svg)](https://glama.ai/mcp/servers/Jenpo/fxpeek-mcp)
+
+
 - Endpoint: `https://fxpeek.com/api/mcp` (Streamable HTTP)
 - Tools: `get_latest_rate(from,to)`, `get_history(from,to,days|date)`
 - Reference data only; not a transaction quote. Spec: https://fxpeek.com/openapi.json
