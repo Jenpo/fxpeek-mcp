@@ -1,0 +1,33 @@
+{
+  "name": "fxpeek-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for FXpeek: source-linked historical reference exchange rates (stdio bridge to the hosted Streamable HTTP endpoint).",
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "fxpeek-mcp": "index.js"
+  },
+  "files": [
+    "index.js",
+    "server.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "exchange-rates",
+    "historical-rates",
+    "fx",
+    "finance"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jenpo/fxpeek-mcp.git"
+  },
+  "homepage": "https://fxpeek.com"
+}
