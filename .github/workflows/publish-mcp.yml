@@ -17,7 +17,41 @@ jobs:
           URL="https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz"
           curl -fsSL "$URL" -o mcp.tar.gz && tar xzf mcp.tar.gz mcp-publisher || {
             echo "tarball install failed"; exit 1; }
+      - name: Read version from server.json
+        id: ver
+        run: |
+          set -e
+          NAME=$(python3 -c 'import json;print(json.load(open("server.json"))["name"])')
+          VERSION=$(python3 -c 'import json;print(json.load(open("server.json"))["version"])')
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Publishing $NAME@$VERSION"
+      - name: Check whether this version is already published
+        id: gate
+        run: |
+          set -e
+          NAME='${{ steps.ver.outputs.name }}'
+          VERSION='${{ steps.ver.outputs.version }}'
+          # The registry rejects a duplicate version with HTTP 400, which used to
+          # turn every master push into a red CI run. Query first instead.
+          ENC=$(python3 -c "import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1],safe=''))" "$NAME")
+          CODE=$(curl -s -o /tmp/srv.json -w '%{http_code}' "https://registry.modelcontextprotocol.io/v0/servers/$ENC/versions/$VERSION")
+          echo "registry lookup http=$CODE"
+          if [ "$CODE" = "200" ]; then
+            echo "already published: $NAME@$VERSION"
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          fi
       - name: Publish
+        if: steps.gate.outputs.publish == 'true'
         run: |
           ./mcp-publisher login github-oidc
           ./mcp-publisher publish
+      - name: Skipped (version already live)
+        if: steps.gate.outputs.publish == 'false'
+        run: |
+          echo "${{ steps.ver.outputs.name }}@${{ steps.ver.outputs.version }} is already in the registry."
+          echo "Bump \"version\" in server.json when the tool surface or remote URL changes."
+          echo "### Registry publish skipped" >> "$GITHUB_STEP_SUMMARY"
+          echo "${{ steps.ver.outputs.name }}@${{ steps.ver.outputs.version }} already published." >> "$GITHUB_STEP_SUMMARY"
